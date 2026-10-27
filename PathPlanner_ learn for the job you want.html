@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PathPlanner: learn for the job you want</title>
+<style>
+:root{--bg:#f3f6fc;--card:#fff;--text:#162036;--muted:#5d6a84;--brand:#2f5fe3;--on:#fff;--bd:#e0e6f2;--ok:#1b9c68;--warn:#b87400;--bad:#cf4536;--soft:#edf2ff;--h1:#2f5fe3;--h2:#17a2c7;--amb:#ffb020;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1422;--card:#172033;--text:#e9eefb;--muted:#9aa8c4;--brand:#7a98ff;--on:#0b1226;--bd:#26314a;--ok:#3ed598;--warn:#f0b24a;--bad:#ff8577;--soft:#1c2745;--h1:#2a3f9e;--h2:#16708c;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e1422;--card:#172033;--text:#e9eefb;--muted:#9aa8c4;--brand:#7a98ff;--on:#0b1226;--bd:#26314a;--ok:#3ed598;--warn:#f0b24a;--bad:#ff8577;--soft:#1c2745;--h1:#2a3f9e;--h2:#16708c;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+.top{display:flex;align-items:center;gap:10px;margin:2px 0 12px}
+.logo{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--h1),var(--h2));color:#fff;display:grid;place-items:center}
+.top b{font-size:18px}.top small{display:block;color:var(--muted);font-size:12px;line-height:1.2}
+.hero{background:linear-gradient(120deg,var(--h1),var(--h2));color:#fff;border-radius:18px;padding:22px;margin-bottom:14px;position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;right:-40px;top:-50px;width:190px;height:190px;border-radius:50%;background:rgba(255,255,255,.13)}
+.hero h1{font-size:clamp(21px,4.6vw,30px);line-height:1.2;margin:0 0 6px;max-width:560px}
+.hero p{margin:0 0 12px;max-width:560px;opacity:.95}
+.pills{display:flex;gap:8px;flex-wrap:wrap}.pills span{background:rgba(255,255,255,.18);padding:4px 11px;border-radius:99px;font-size:12.5px}
+.tabs{display:flex;gap:4px;background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:4px;margin-bottom:14px}
+.tabs button{flex:1;padding:10px 6px;border:0;background:none;color:var(--muted);border-radius:10px;font:inherit;font-weight:600;cursor:pointer}
+.tabs button.on{background:var(--brand);color:var(--on)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start}
+@media(max-width:700px){.grid2{grid-template-columns:1fr}}
+h2{font-size:17px;margin:0 0 8px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 2px 10px rgba(22,32,54,.05)}
+label{display:block;font-size:13px;color:var(--muted);margin:12px 0 4px;font-weight:600}
+input,select{width:100%;padding:11px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--text);font:inherit}
+input:focus,select:focus{outline:2px solid var(--brand);outline-offset:1px}
+.row{display:flex;gap:10px}.row>*{flex:1}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.chips button{border:1px solid var(--bd);background:var(--soft);color:var(--brand);border-radius:99px;padding:5px 11px;font:inherit;font-size:13px;cursor:pointer}
+.days{display:flex;gap:6px;flex-wrap:wrap}
+.days button{width:50px;height:40px;border:1px solid var(--bd);background:var(--bg);color:var(--text);border-radius:10px;cursor:pointer;font:inherit}
+.days button.on{background:var(--brand);color:var(--on);border-color:var(--brand);font-weight:700}
+.btn{display:inline-block;padding:11px 16px;border:0;border-radius:11px;background:var(--brand);color:var(--on);font:inherit;font-weight:700;cursor:pointer;text-decoration:none}
+.btn.alt{background:var(--soft);color:var(--brand);border:1px solid var(--bd)}
+.btn.sm{padding:6px 11px;font-size:13px}.btn:disabled{opacity:.5;cursor:default}
+.bar{height:8px;background:var(--bd);border-radius:6px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--ok),var(--h2))}
+.hd{display:flex;gap:16px;align-items:center}
+.ring{width:88px;height:88px;border-radius:50%;flex:none;background:conic-gradient(var(--ok) calc(var(--p)*1%),var(--bd) 0);display:grid;place-items:center}
+.ring b{width:68px;height:68px;border-radius:50%;background:var(--card);display:grid;place-items:center;font-size:18px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
+@media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}}
+.st{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px}
+.st b{font-size:24px;display:block;line-height:1.15}.st span{color:var(--muted);font-size:12px}
+.next{border-left:5px solid var(--amb)}
+.mh{display:flex;gap:10px;align-items:center;margin-bottom:10px}.mh h2{margin:0}
+.num{width:34px;height:34px;border-radius:10px;background:var(--soft);color:var(--brand);display:grid;place-items:center;font-weight:800;flex:none}
+.t{display:flex;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--bd)}
+.t:first-of-type{border-top:0}
+.ic{width:30px;height:30px;border-radius:50%;background:var(--soft);color:var(--brand);display:grid;place-items:center;font-size:11px;flex:none}
+.ic.ok{background:var(--ok);color:#fff;font-size:14px}
+.t .m{flex:1;min-width:0}.t .m b{display:block;font-weight:600}.t small{color:var(--muted)}
+.tag{font-size:11px;padding:2px 8px;border-radius:9px;border:1px solid var(--bd);color:var(--muted);white-space:nowrap;font-weight:600}
+.tag.done{color:var(--ok);border-color:var(--ok)}.tag.skipped,.tag.missed{color:var(--bad);border-color:var(--bad)}
+.acts{display:flex;gap:6px;flex-wrap:wrap}
+a{color:var(--brand)}.note{font-size:13px;color:var(--muted);margin:4px 0}.warn{color:var(--warn);font-size:13px}
+#toast{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:8px;z-index:9;pointer-events:none}
+#toast div{background:var(--brand);color:var(--on);padding:12px 14px;border-radius:12px;font-weight:600;box-shadow:0 4px 16px rgba(0,0,0,.25);pointer-events:auto;max-width:520px;margin:0 auto;width:100%}
+.hide{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="top"><div class="logo"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11.5V16c0 1.5 3 3 6 3s6-1.5 6-3v-4.5"/></svg></div><div><b>PathPlanner</b><small>Learn for the job you want</small></div></div>
+<div class="hero"><h1>Learn what your dream job needs, on your schedule.</h1><p>Tell us your target role and free time. We build a roadmap, fit every lesson into your routine and remind you when it’s time to study.</p><div class="pills"><span>AI roadmap</span><span>Fits your routine</span><span>Smart reminders</span><span>Progress tracking</span></div></div>
+<div class="tabs"><button data-v="setup" class="on" aria-current="page">1. Set up</button><button data-v="road">2. Roadmap</button><button data-v="today">3. Learn</button></div>
+
+<section id="setup"><div class="grid2">
+ <div class="card">
+  <h2>1. Choose your goal</h2>
+  <label for="job">Target job or role</label>
+  <input id="job" list="jobs" placeholder="e.g. Data Analyst" maxlength="60">
+  <datalist id="jobs"><option>Data Analyst</option><option>Web Developer</option><option>Machine Learning Engineer</option><option>Cybersecurity Analyst</option><option>Software Engineer</option></datalist>
+  <div class="chips" id="chips"></div>
+  <label for="months">Timeline</label>
+  <select id="months"><option value="3">3 months</option><option value="6">6 months</option><option value="9">9 months</option><option value="12" selected>12 months</option></select>
+ </div>
+ <div class="card">
+  <h2>2. Your weekly routine</h2>
+  <label>Days you can study</label>
+  <div class="days" id="days" role="group" aria-label="Days you can study"></div>
+  <div class="row">
+   <div><label for="s">Free time from</label><input id="s" type="time" value="19:00"></div>
+   <div><label for="e">Free time until</label><input id="e" type="time" value="21:00"></div>
+  </div>
+  <label for="cls">Classes / fixed commitments (for your reference)</label>
+  <input id="cls" placeholder="e.g. Classes 9:00 AM to 4:00 PM, Mon to Fri" maxlength="120">
+  <label for="lead">Remind me before each lesson</label>
+  <select id="lead"><option value="5">5 minutes</option><option value="15" selected>15 minutes</option><option value="30">30 minutes</option></select>
+  <p class="warn" id="err"></p>
+  <div class="acts" style="margin-top:10px"><button class="btn" id="gen">Generate my roadmap</button><button class="btn alt" id="reset">Reset all</button></div>
+  <p class="note" id="status"></p>
+ </div>
+</div></section>
+
+<section id="road" class="hide"></section>
+<section id="today" class="hide"></section>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+const KEY="pathplanner.v1";
+const DN=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+let S={p:{job:"",months:12,days:[1,2,3,4,5],s:"19:00",e:"21:00",cls:"",lead:15},ms:[],tasks:[],info:""};
+try{const r=localStorage.getItem(KEY);if(r){const o=JSON.parse(r);if(o&&o.p)S=o}}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const toMin=h=>{const[a,b]=h.split(":").map(Number);return a*60+b};
+const fmt=m=>{const h=Math.floor(m/60),n=m%60,ap=h>=12?"PM":"AM";return((h+11)%12+1)+":"+String(n).padStart(2,"0")+" "+ap};
+const ymd=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const parse=s=>{const[a,b,c]=s.split("-").map(Number);return new Date(a,b-1,c)};
+const nice=s=>parse(s).toLocaleDateString("en-IN",{weekday:"short",day:"numeric",month:"short"});
+const nowMin=()=>{const n=new Date();return n.getHours()*60+n.getMinutes()};
+const yt=q=>"https://www.youtube.com/results?search_query="+encodeURIComponent(q);
+const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+
+function toast(msg){const d=document.createElement("div");d.textContent=msg;$("toast").appendChild(d);setTimeout(()=>d.remove(),9000);d.onclick=()=>d.remove()}
+
+/* ---------- setup form ---------- */
+function drawDays(){const w=$("days");w.innerHTML="";[1,2,3,4,5,6,0].forEach(d=>{const b=document.createElement("button");b.type="button";b.textContent=DN[d];b.className=S.p.days.includes(d)?"on":"";b.setAttribute("aria-pressed",S.p.days.includes(d)?"true":"false");b.onclick=()=>{const i=S.p.days.indexOf(d);i<0?S.p.days.push(d):S.p.days.splice(i,1);drawDays()};w.appendChild(b)})}
+function fillForm(){const p=S.p;$("job").value=p.job;$("months").value=p.months;$("s").value=p.s;$("e").value=p.e;$("cls").value=p.cls||"";$("lead").value=p.lead;drawDays()}
+
+/* ---------- roadmap sources ---------- */
+const ROLES=[
+[/data\s*(analy|sci)|business analy/i,[["Spreadsheets (Excel)",["Excel basics for beginners","Excel pivot tables tutorial","Excel data cleaning"]],["SQL for data",["SQL basics for beginners","SQL joins explained","SQL window functions"]],["Python and pandas",["Python basics for beginners","pandas data analysis tutorial","Data cleaning with pandas"]],["Dashboards and storytelling",["Power BI dashboard tutorial","Data visualization principles","Present insights to stakeholders"]]]],
+[/web|front\s*end|full\s*stack|react/i,[["HTML and CSS",["HTML basics for beginners","CSS flexbox and grid","Responsive web design"]],["JavaScript",["JavaScript basics for beginners","JavaScript DOM tutorial","Async JavaScript and fetch"]],["React",["React basics tutorial","React hooks explained","React project structure"]],["Backend and databases",["Node.js and Express tutorial","REST API design basics","SQL or MongoDB basics"]]]],
+[/machine|ml\b|\bai\b|deep learning/i,[["Python and maths",["Python basics for beginners","Linear algebra for machine learning","Probability and statistics basics"]],["Core machine learning",["Machine learning basics","Regression and classification","Model evaluation metrics"]],["Deep learning",["Neural networks explained","PyTorch tutorial for beginners","CNN basics"]],["Deploying models",["Build an ML project end to end","Deploy a model with FastAPI","MLOps basics"]]]],
+[/cyber|security|ethical hack|soc/i,[["Networking and OS",["Computer networking basics","Linux for beginners","TCP IP explained"]],["Security fundamentals",["Cybersecurity fundamentals","OWASP top 10 explained","Cryptography basics"]],["Hands-on practice",["Intro to ethical hacking","Wireshark tutorial","Capture the flag for beginners"]],["Defence and monitoring",["SIEM basics","Incident response basics","Security analyst workflow"]]]]
+];
+function template(job){
+  let groups=null;for(const[r,g] of ROLES){if(r.test(job)){groups=g;break}}
+  if(!groups)groups=[["Foundations",[job+" roadmap for beginners",job+" basics explained",job+" core concepts"]],["Tools and practice",[job+" tools tutorial",job+" practice exercises",job+" hands-on tutorial"]]];
+  const ms=groups.map(([t,qs])=>({title:t,tasks:qs.map(q=>({title:cap(q),minutes:40,q}))}));
+  ms.push({title:"Portfolio project",tasks:[{title:"Plan a "+job+" portfolio project",minutes:40,q:job+" portfolio project ideas"},{title:"Build the project, part 1",minutes:60,q:job+" project walkthrough"},{title:"Build the project, part 2",minutes:60,q:job+" project walkthrough"},{title:"Publish on GitHub",minutes:30,q:"how to publish a project on GitHub"}]});
+  ms.push({title:"Interview preparation",tasks:[{title:job+" interview questions",minutes:40,q:job+" interview questions for freshers"},{title:"Resume tips for freshers",minutes:30,q:"resume tips for freshers"},{title:"Mock interview practice",minutes:45,q:job+" mock interview"}]});
+  return ms;
+}
+const API_URL="/api/roadmap"; /* serverless endpoint that holds your API key (see README); without it the built-in template is used */
+function PROMPT(job,months,tot){
+  return "You are a career learning planner for an Indian B.Tech student.\nTarget role: "+job+"\nTimeline: "+months+" months\nTotal study minutes available: about "+tot+" (a little less is fine).\n"+
+  "Return ONLY JSON, no markdown: {\"milestones\":[{\"title\":string,\"tasks\":[{\"title\":string,\"minutes\":integer 20-60,\"q\":string}]}]}\n"+
+  "Rules: 5 to 7 milestones ordered from beginner to job-ready; 4 to 8 tasks each; q is a short YouTube search query that finds a beginner-friendly tutorial for that task; include one portfolio project milestone and a final interview preparation milestone; total minutes must not exceed the limit above.";
+}
+async function aiRoadmap(p,perWeek){
+  const tot=Math.round(p.months*4.3*perWeek);
+  let sample=null;try{if(typeof claude!=="undefined")sample=await claude.use("sample")}catch(e){}
+  let j;
+  if(sample){j=await sample.json(PROMPT(p.job,p.months,tot))}
+  else{const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({job:p.job,months:p.months,minutes:tot})});if(!r.ok)throw new Error("api");j=await r.json()}
+  if(!j||!Array.isArray(j.milestones)||!j.milestones.length)throw new Error("bad");
+  return j.milestones.map(m=>({title:String(m.title||"Milestone").slice(0,60),tasks:(Array.isArray(m.tasks)?m.tasks:[]).map(t=>({title:String(t.title||"Task").slice(0,90),minutes:Math.max(15,Math.min(90,parseInt(t.minutes)||40)),q:String(t.q||t.title||p.job).slice(0,100)}))})).filter(m=>m.tasks.length);
+}
+
+/* ---------- scheduler ---------- */
+function place(list,from){
+  const S0=toMin(S.p.s),E0=toMin(S.p.e);let d=new Date(from);d.setHours(0,0,0,0);let i=0;
+  for(let g=0;g<900&&i<list.length;g++){
+    if(S.p.days.includes(d.getDay())){
+      let c=S0;if(ymd(d)===ymd(new Date()))c=Math.max(S0,Math.ceil((nowMin()+1)/5)*5);
+      while(i<list.length){const t=list[i],dur=Math.min(t.min,E0-S0);if(c+dur>E0)break;t.date=ymd(d);t.start=c;t.min=dur;c+=dur+5;i++}
+    }
+    d.setDate(d.getDate()+1);
+  }
+  return i===list.length;
+}
+
+/* ---------- generate ---------- */
+$("gen").onclick=async()=>{
+  const p=S.p;p.job=$("job").value.trim();p.months=+$("months").value;p.s=$("s").value;p.e=$("e").value;p.cls=$("cls").value.trim();p.lead=+$("lead").value;
+  const err=$("err");err.textContent="";
+  if(!p.job){err.textContent="Please enter a target job.";return}
+  if(!p.days.length){err.textContent="Select at least one day you can study.";return}
+  if(!p.s||!p.e||toMin(p.e)-toMin(p.s)<20){err.textContent="Your free time window must be at least 20 minutes.";return}
+  const perWeek=p.days.length*(toMin(p.e)-toMin(p.s));
+  const btn=$("gen");btn.disabled=true;let ms,src="built-in template";
+  $("status").textContent="Asking Claude to build your roadmap…";
+  try{ms=await aiRoadmap(p,perWeek);src="Claude (AI)"}catch(e){ms=template(p.job)}
+  S.ms=[];S.tasks=[];let n=0;
+  ms.forEach((m,mi)=>{S.ms.push({title:m.title});m.tasks.forEach(t=>S.tasks.push({id:"t"+(++n),ms:mi,title:t.title,min:t.minutes,q:t.q,st:"pending",rem:0}))});
+  const ok=place(S.tasks,new Date());
+  const last=S.tasks[S.tasks.length-1];
+  S.info="Source: "+src+". Resources are YouTube search links, not verified playlists.";
+  if(!ok)S.info+=" Not every task fit into the next "+"900 days; add study days or time.";
+  else if(last&&last.date&&parse(last.date)>new Date(Date.now()+p.months*30.5*864e5))S.info+=" At this pace the plan finishes after your "+p.months+"-month timeline. Add days or free time, or extend the timeline.";
+  save();btn.disabled=false;$("status").textContent="";view("road");toast("Roadmap ready: "+S.tasks.length+" tasks scheduled in your free slots.");
+};
+$("reset").onclick=()=>{if(!confirm("Clear your plan and settings?"))return;try{localStorage.removeItem(KEY)}catch(e){}S={p:{job:"",months:12,days:[1,2,3,4,5],s:"19:00",e:"21:00",cls:"",lead:15},ms:[],tasks:[],info:""};fillForm();view("setup")};
+
+/* ---------- views ---------- */
+const isMissed=t=>t.st==="pending"&&t.date&&(t.date<ymd(new Date())||(t.date===ymd(new Date())&&t.start+t.min<=nowMin()));
+function streak(){const s=new Set(S.tasks.filter(t=>t.doneOn).map(t=>t.doneOn));let d=new Date();if(!s.has(ymd(d)))d.setDate(d.getDate()-1);let n=0;while(s.has(ymd(d))){n++;d.setDate(d.getDate()-1)}return n}
+function chips(){const w=$("chips");["Data Analyst","Web Developer","Machine Learning Engineer","Cybersecurity Analyst"].forEach(j=>{const b=document.createElement("button");b.type="button";b.textContent=j;b.onclick=()=>{$("job").value=j};w.appendChild(b)})}
+function taskRow(t,withActs){
+  const tag=t.st==="done"?'<span class="tag done">done</span>':t.st==="skipped"?'<span class="tag skipped">skipped</span>':isMissed(t)?'<span class="tag missed">missed</span>':"";
+  const when=t.date?nice(t.date)+", "+fmt(t.start)+" · "+t.min+" min":"not scheduled";
+  let a="";
+  if(withActs){a='<div class="acts"><a class="btn sm alt" target="_blank" rel="noopener" href="'+yt(t.q)+'">Watch</a>'+(t.st==="done"?'<button class="btn sm alt" data-a="undo" data-id="'+t.id+'">Undo</button>':'<button class="btn sm" data-a="done" data-id="'+t.id+'">Done</button><button class="btn sm alt" data-a="skip" data-id="'+t.id+'">Skip</button>')+'</div>'}
+  return '<div class="t"><span class="ic'+(t.st==="done"?" ok":"")+'">'+(t.st==="done"?"✓":"▶")+'</span><div class="m"><b>'+esc(t.title)+'</b><small>'+esc(when)+'</small></div>'+tag+a+'</div>';
+}
+function renderRoad(){
+  const el=$("road");
+  if(!S.tasks.length){el.innerHTML='<div class="card"><h2>No roadmap yet</h2><p class="note">Fill in the set-up tab and generate your first roadmap.</p></div>';return}
+  const done=S.tasks.filter(t=>t.st==="done").length,pct=Math.round(done/S.tasks.length*100),last=S.tasks[S.tasks.length-1],hrs=Math.round(S.tasks.reduce((a,t)=>a+t.min,0)/60);
+  let h='<div class="card hd"><div class="ring" style="--p:'+pct+'"><b>'+pct+'%</b></div><div><h2>'+esc(S.p.job)+' roadmap</h2><p class="note">'+S.ms.length+' modules · '+S.tasks.length+' lessons · about '+hrs+' hours</p><p class="note">'+done+' done'+(last.date?". Planned to finish by "+nice(last.date)+".":".")+'</p><p class="note">'+esc(S.info||"")+'</p></div></div>';
+  S.ms.forEach((m,mi)=>{const ts=S.tasks.filter(t=>t.ms===mi),d=ts.filter(t=>t.st==="done").length,mins=ts.reduce((a,t)=>a+t.min,0);
+    h+='<div class="card"><div class="mh"><span class="num">'+(mi+1)+'</span><div><h2>'+esc(m.title)+'</h2><small class="note">'+ts.length+' lessons · '+mins+' min · '+d+' done</small></div></div><div class="bar"><i style="width:'+Math.round(d/ts.length*100)+'%"></i></div><div style="margin-top:6px">'+ts.map(t=>taskRow(t,false)).join("")+'</div></div>'});
+  el.innerHTML=h;
+}
+function weekRange(){const n=new Date();n.setHours(0,0,0,0);const dow=(n.getDay()+6)%7;const a=new Date(n);a.setDate(n.getDate()-dow);const b=new Date(a);b.setDate(a.getDate()+6);return[ymd(a),ymd(b)]}
+function renderToday(){
+  const el=$("today");
+  if(!S.tasks.length){el.innerHTML='<div class="card"><h2>Nothing here yet</h2><p class="note">Generate a roadmap to see your lessons, streak and reminders.</p></div>';return}
+  const td=ymd(new Date()),tt=S.tasks.filter(t=>t.date===td),miss=S.tasks.filter(isMissed).length+S.tasks.filter(t=>t.st==="skipped").length;
+  const next=S.tasks.filter(t=>t.st==="pending"&&t.date>td).slice(0,3),[a,b]=weekRange(),wk=S.tasks.filter(t=>t.date>=a&&t.date<=b),wd=wk.filter(t=>t.st==="done");
+  const wmin=wd.reduce((x,t)=>x+t.min,0),pct=Math.round(S.tasks.filter(t=>t.st==="done").length/S.tasks.length*100),nx=S.tasks.find(t=>t.st==="pending"&&!isMissed(t));
+  let h='<div class="stats"><div class="st"><b>'+streak()+'</b><span>day streak</span></div><div class="st"><b>'+wd.length+'/'+wk.length+'</b><span>lessons this week</span></div><div class="st"><b>'+wmin+'</b><span>minutes learned this week</span></div><div class="st"><b>'+pct+'%</b><span>course complete</span></div></div>';
+  h+=nx?'<div class="card next"><span class="tag">UP NEXT</span><h2 style="margin:8px 0 2px">'+esc(nx.title)+'</h2><p class="note">'+nice(nx.date)+", "+fmt(nx.start)+" · "+nx.min+' min</p><div class="acts" style="margin-top:8px"><a class="btn" target="_blank" rel="noopener" href="'+yt(nx.q)+'">Start learning</a><button class="btn alt" data-a="done" data-id="'+nx.id+'">Mark done</button></div></div>':'<div class="card next"><h2>All caught up</h2><p class="note">No upcoming lessons. Replan or generate a new roadmap.</p></div>';
+  h+='<div class="card"><h2>Today, '+nice(td)+'</h2>'+(tt.length?tt.map(t=>taskRow(t,true)).join(""):'<p class="note">No lessons scheduled today. Enjoy the break.</p>')+'</div>';
+  if(next.length)h+='<div class="card"><h2>Coming up</h2>'+next.map(t=>taskRow(t,true)).join("")+'</div>';
+  h+='<div class="card"><h2>Stay on track</h2><div class="acts"><button class="btn" data-a="replan"'+(miss?"":" disabled")+'>Replan '+miss+' missed or skipped lesson'+(miss===1?"":"s")+'</button><button class="btn alt" data-a="perm">Enable browser notifications</button><button class="btn alt" data-a="test">Test reminder</button></div><p class="note">Reminders appear here while this page is open. Browser notifications work only if your browser allows them.</p></div>';
+  el.innerHTML=h;
+}
+document.addEventListener("click",e=>{
+  const b=e.target.closest("[data-a]");if(!b)return;const a=b.dataset.a,t=S.tasks.find(x=>x.id===b.dataset.id);
+  if(a==="done"&&t){t.st="done";t.doneOn=ymd(new Date())}
+  else if(a==="skip"&&t)t.st="skipped";
+  else if(a==="undo"&&t){t.st="pending";delete t.doneOn}
+  else if(a==="replan"){const list=S.tasks.filter(x=>x.st!=="done");list.forEach(x=>{x.st="pending";x.rem=0});place(list,new Date());toast("Replanned: remaining tasks moved into your upcoming free slots.")}
+  else if(a==="perm"){try{Notification.requestPermission().then(r=>toast(r==="granted"?"Browser notifications enabled.":"Notifications not allowed. In-page reminders still work."))}catch(x){toast("This browser does not allow notifications here. In-page reminders still work.")}return}
+  else if(a==="test"){notify("Test reminder","This is how your reminders will look.");return}
+  save();renderRoad();renderToday();
+});
+function view(v){["setup","road","today"].forEach(x=>$(x).classList.toggle("hide",x!==v));document.querySelectorAll(".tabs button").forEach(b=>{const on=b.dataset.v===v;b.classList.toggle("on",on);b.setAttribute("aria-current",on?"page":"false")});if(v==="road")renderRoad();if(v==="today")renderToday()}
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>view(b.dataset.v));
+
+/* ---------- reminders ---------- */
+function notify(title,body){toast(title+": "+body);try{if(window.Notification&&Notification.permission==="granted")new Notification(title,{body})}catch(e){}}
+function tick(){
+  const td=ymd(new Date()),n=nowMin();let ch=false;
+  S.tasks.forEach(t=>{if(t.st==="pending"&&t.date===td&&!t.rem&&n>=t.start-S.p.lead&&n<t.start+t.min){t.rem=1;ch=true;notify("Reminder","“"+t.title+"” at "+fmt(t.start))}});
+  if(ch){save();if(!$("today").classList.contains("hide"))renderToday()}
+}
+setInterval(tick,15000);
+
+chips();fillForm();if(S.tasks.length){view("today")}tick();
+</script>
+</body>
+</html>
